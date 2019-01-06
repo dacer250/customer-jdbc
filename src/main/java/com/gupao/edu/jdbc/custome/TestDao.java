@@ -61,6 +61,7 @@ public class TestDao extends BaseDaoSupport<User, Long> {
         queryRule.orNotInNeedSuffix("id",ids.toArray());
         queryRule.asc("id");
         queryRule.desc("name");
+        queryRule.andIsEmptyNeedPrefix("name");
         List<User> select = select(queryRule);
         Optional<List<User>> optional = Optional.of(select);
         if (optional.isPresent()) {

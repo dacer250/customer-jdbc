@@ -1,5 +1,6 @@
 package com.gupao.edu.jdbc.framework.core;
 
+import com.gupao.edu.jdbc.framework.exception.MissBracketsException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -51,7 +52,13 @@ public class QueryRuleSqlBuilder {
      *
      * @param queryRule
      */
-    public QueryRuleSqlBuilder(QueryRule queryRule) {
+    public QueryRuleSqlBuilder(QueryRule queryRule) throws MissBracketsException {
+        if (queryRule==null){
+            throw new NullPointerException();
+        }
+        if (queryRule.getBracket()/2!=0){
+            throw new MissBracketsException();
+        }
         propertiesList = new ArrayList(queryRule.getRules().size());
         values = new ArrayList();
         sqlCharlList = new ArrayList<>(queryRule.getRules().size());

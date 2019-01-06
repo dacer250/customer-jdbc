@@ -34,6 +34,7 @@ public class QueryRule implements Serializable {
 
     private List<Rule> rules;
 
+    private int bracket = 0;
 
     private List<Order> orders;
 
@@ -50,6 +51,10 @@ public class QueryRule implements Serializable {
         orders = new ArrayList<>();
     }
 
+
+    public int getBracket() {
+        return bracket;
+    }
 
     public QueryRule asc(String... properties) {
         orders.add(new Order(Arrays.asList(properties), true));
@@ -71,17 +76,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andIsEmptyNeedPrefix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISEMPTY, true).setAndOr(AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andIsEmptyNeedSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISEMPTY, false, true).setAndOr(AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andIsEmptyNeedPrefixAndSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISEMPTY, true, true).setAndOr(AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -98,17 +106,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orIsEmptyNeedPrefix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISEMPTY, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orIsEmptyNeedSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISEMPTY, false, true).setAndOr(OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orIsEmptyNeedPrefixAndSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISEMPTY, true, true).setAndOr(AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -120,18 +131,21 @@ public class QueryRule implements Serializable {
 
 
     public QueryRule andLikeNeedPrefix(String propertyName, String value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value},LIKE, true,false,AND));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andLikeNeedSuffix(String propertyName, String value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value},LIKE, false,true,AND));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andLikeNeedPrefixAndSuffix(String propertyName, String value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value},LIKE, true,true,AND));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -143,17 +157,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andEqualPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -165,17 +182,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andBetweenNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andBetweenNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andBetweenPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -185,24 +205,27 @@ public class QueryRule implements Serializable {
         return this;
     }
 
-    public QueryRule andIn(String propertyName, Object [] value) {
-        this.rules.add(new Rule(propertyName,value, IN).setAndOr(AND));
+    public QueryRule andIn(String propertyName, Object[] value) {
+        this.rules.add(new Rule(propertyName, value, IN).setAndOr(AND));
         return this;
     }
 
     public QueryRule andInNeedPrefix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, IN, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andInNeedSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, IN, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
-    public QueryRule andInPrefixAndSuffix(String propertyName, Object [] value) {
+    public QueryRule andInPrefixAndSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, IN, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -212,42 +235,48 @@ public class QueryRule implements Serializable {
         return this;
     }
 
-    public QueryRule orInNeedPrefix(String propertyName, Object [] value) {
-        this.rules.add(new Rule(propertyName,value, IN, true, false, OR));
+    public QueryRule orInNeedPrefix(String propertyName, Object[] value) {
+        this.rules.add(new Rule(propertyName, value, IN, true, false, OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
-    public QueryRule orInNeedSuffix(String propertyName, Object []value) {
+    public QueryRule orInNeedSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, IN, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
-    public QueryRule orInPrefixAndSuffix(String propertyName, Object [] value) {
+    public QueryRule orInPrefixAndSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, IN, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
 
     public QueryRule andNotIn(String propertyName, List<Object> values) {
-        this.rules.add(new Rule(propertyName,values.toArray(), NOTIN).setAndOr(AND));
+        this.rules.add(new Rule(propertyName, values.toArray(), NOTIN).setAndOr(AND));
         return this;
     }
 
 
-    public QueryRule andNotInNeedPrefix(String propertyName, Object [] value) {
+    public QueryRule andNotInNeedPrefix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, NOTIN, true, false, OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
-    public QueryRule andNotInNeedSuffix(String propertyName, Object [] value) {
+    public QueryRule andNotInNeedSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, NOTIN, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
-    public QueryRule andNotInPrefixAndSuffix(String propertyName, Object  [] value) {
+    public QueryRule andNotInPrefixAndSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, NOTIN, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -259,18 +288,21 @@ public class QueryRule implements Serializable {
 
 
     public QueryRule orNotInNeedPrefix(String propertyName, Object[] value) {
-        this.rules.add(new Rule(propertyName,value, NOTIN, true, false, OR));
+        this.rules.add(new Rule(propertyName, value, NOTIN, true, false, OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
-    public QueryRule orNotInNeedSuffix(String propertyName, Object [] value) {
-        this.rules.add(new Rule(propertyName,value, NOTIN, false, true, OR));
+    public QueryRule orNotInNeedSuffix(String propertyName, Object[] value) {
+        this.rules.add(new Rule(propertyName, value, NOTIN, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
-    public QueryRule orNotInPrefixAndSuffix(String propertyName, Object [] value) {
+    public QueryRule orNotInPrefixAndSuffix(String propertyName, Object[] value) {
         this.rules.add(new Rule(propertyName, value, NOTIN, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -283,17 +315,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andNotEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andNotEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andNotEqualPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -306,17 +341,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andGreaterThanNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GT, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andGreaterThanNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GT, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andGreaterThanPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GT, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -329,17 +367,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andGreaterEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GE, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andGreaterEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GE, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andGreaterEqualNeedPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GE, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -352,17 +393,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andLessThanNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LT, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andLessThanNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LT, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andLessThanNeedPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LT, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -375,17 +419,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andLessEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LE, true, false, AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andLessEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LE, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andLessEqualNeedPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LE, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -397,17 +444,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orIsNullNeedPrefix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISNULL, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orIsNullNeedSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISNULL, false, true).setAndOr(OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orIsNullNeedPrefixAndSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISNULL, true, true).setAndOr(OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -419,17 +469,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orIsNotNullNeedPrefix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISNOTNULL, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orIsNotNullNeedSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISNOTNULL, false, true).setAndOr(OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orIsNotNullNeedPrefixAndSuffix(String propertyName) {
         this.rules.add(new Rule(propertyName, ISNOTNULL, true, true).setAndOr(OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -442,17 +495,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orLikeNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orLikeNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orLikeNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, LIKE, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -465,17 +521,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orEqualNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, EQ, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -488,17 +547,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orBetweenNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orBetweenNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orBetweenNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, BETWEEN, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -510,17 +572,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orNotEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orNotEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orNotEqualNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, NOTEQ, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -533,17 +598,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orGreaterThanNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GT, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orGreaterThanNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GT, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orGreaterThanNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, GT, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, GT, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -556,17 +624,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orGreaterEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GE, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orGreaterEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, GE, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orGreaterEqualNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, GE, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, GE, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -578,17 +649,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orLessThanNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LT, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orLessThanNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LT, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orLessThanNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, LT, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, LT, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -600,17 +674,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule orLessEqualNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LE, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule orLessEqualNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, LE, false, true, OR));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule orLessEqualNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, LE, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, LE, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -623,17 +700,20 @@ public class QueryRule implements Serializable {
 
     public QueryRule andIsNotEmptyNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, true).setAndOr(AND));
+        checkBrackets(true,false);
         return this;
     }
 
 
     public QueryRule andIsNotEmptyNeedSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, false, true, AND));
+        checkBrackets(false,true);
         return this;
     }
 
     public QueryRule andIsNotEmptyNeedPrefixAndSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, false, true, AND));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, true, true, AND));
+        checkBrackets(true,true);
         return this;
     }
 
@@ -645,17 +725,29 @@ public class QueryRule implements Serializable {
 
     public QueryRule orIsNotEmptyNeedPrefix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, true).setAndOr(OR));
+        checkBrackets(true,false);
         return this;
     }
 
     public QueryRule orIsNotEmptyNeedSuffix(String propertyName, Object value) {
-        this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, false, true, OR));
+        this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, true, true, OR));
+        checkBrackets(true,true);
         return this;
     }
 
     public QueryRule orIsNotEmptyNeedPrefixAndSuffix(String propertyName, Object value) {
         this.rules.add(new Rule(propertyName, new Object[]{value}, ISNOTEMPTY, false, true, OR));
         return this;
+    }
+
+
+    private void checkBrackets(boolean needPrefix, boolean needSuffix) {
+        if (needPrefix){
+            bracket++;
+        }
+        if (needSuffix){
+            bracket++;
+        }
     }
 
 
@@ -721,6 +813,8 @@ public class QueryRule implements Serializable {
             this.needPrefix = needPrefix;
             this.needSuffix = needSuffix;
         }
+
+
 
 
         public Rule(String property, Object[] values, int type, boolean needPrefix) {
